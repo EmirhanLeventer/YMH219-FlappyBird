@@ -21,13 +21,57 @@ public partial class MainForm : Form
     public MainForm()
     {
         InitializeComponent();
+
+        // Oyun motoru bir şey değiştiğinde haber verir, form da etiketleri günceller.
+        _game.ScoreChanged += (s, e) => UpdateInfoLabels();
+        _game.StateChanged += (s, e) => UpdateInfoLabels();
     }
 
     private void MainForm_Load(object? sender, EventArgs e)
     {
+        UpdateInfoLabels();
         _stopwatch.Start();
         gameTimer.Start();
         gamePanel.Focus();
+    }
+
+    /// <summary>Üst bilgi çubuğundaki skor, hız ve durum yazılarını oyundaki değerlerle eşitler.</summary>
+    private void UpdateInfoLabels()
+    {
+        lblScore.Text = $"Skor: {_game.Score}";
+        lblSpeed.Text = $"Hız: {_game.Speed:0}";
+        lblSpeed.Left = lblScore.Right + 16;
+
+        switch (_game.State)
+        {
+            case GameState.Ready:
+                lblState.Text = "● HAZIR";
+                lblState.ForeColor = Color.Gold;
+                break;
+            case GameState.Playing:
+                lblState.Text = "● OYUNDA";
+                lblState.ForeColor = Color.LightGreen;
+                break;
+            case GameState.GameOver:
+                lblState.Text = "● OYUN BİTTİ";
+                lblState.ForeColor = Color.Tomato;
+                break;
+        }
+
+        lblState.Left = lblSpeed.Right + 16;
+    }
+
+    /// <summary>Oyunu baştan başlatır (Yeni Oyun butonu ve R / Enter tuşu).</summary>
+    private void StartNewGame()
+    {
+        _game.Reset();
+        gamePanel.Focus(); // Butona tıklandıktan sonra klavye odağı oyuna dönsün.
+        gamePanel.Invalidate();
+    }
+
+    private void btnNewGame_Click(object? sender, EventArgs e)
+    {
+        StartNewGame();
     }
 
     /// <summary>
@@ -61,6 +105,12 @@ public partial class MainForm : Form
             _game.Flap();
             e.Handled = true;
             e.SuppressKeyPress = true; // Tuş başka kontrole (ör. butona) ulaşmasın.
+        }
+        else if (e.KeyCode == Keys.R || (e.KeyCode == Keys.Enter && _game.State == GameState.GameOver))
+        {
+            StartNewGame();
+            e.Handled = true;
+            e.SuppressKeyPress = true;
         }
     }
 

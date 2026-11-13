@@ -12,6 +12,7 @@ namespace FlappyBird
 
         private readonly Font _scoreFont = new Font("Segoe UI", 36f, FontStyle.Bold);
         private readonly Font _messageFont = new Font("Segoe UI", 16f, FontStyle.Bold);
+        private readonly Font _smallFont = new Font("Segoe UI", 12f, FontStyle.Bold);
 
         public void Draw(Graphics g, GameEngine game)
         {
@@ -29,6 +30,23 @@ namespace FlappyBird
 
             if (game.State == GameState.Ready)
                 DrawCenteredText(g, "Başlamak için SPACE / ↑ tuşuna bas", _messageFont, 200f);
+            else if (game.State == GameState.GameOver)
+                DrawGameOver(g, game);
+        }
+
+        /// <summary>Oyun bitince ekranın ortasına yarı saydam bir bilgi kutusu çizer.</summary>
+        private void DrawGameOver(Graphics g, GameEngine game)
+        {
+            var box = new RectangleF(60f, 190f, GameEngine.FieldWidth - 120f, 190f);
+
+            using (var background = new SolidBrush(Color.FromArgb(190, 30, 30, 40)))
+                g.FillRectangle(background, box);
+            using (var border = new Pen(Color.White, 2f))
+                g.DrawRectangle(border, box.X, box.Y, box.Width, box.Height);
+
+            DrawCenteredText(g, "GAME OVER", _scoreFont, box.Y + 15f);
+            DrawCenteredText(g, $"Skor: {game.Score}", _messageFont, box.Y + 85f);
+            DrawCenteredText(g, "Yeniden: R / Enter ya da Yeni Oyun", _smallFont, box.Y + 135f);
         }
 
         private static void DrawSky(Graphics g)

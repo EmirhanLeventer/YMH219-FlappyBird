@@ -139,7 +139,10 @@ namespace FlappyBird
         private bool CheckCollision()
         {
             if (Bird.Bounds.Bottom >= GroundY)
+            {
+                Bird.LandOn(GroundY);
                 return true;
+            }
 
             // Kuş oval çizildiği için çarpışma kutusu biraz küçültülür (daha adil his).
             RectangleF hitBox = Bird.Bounds;

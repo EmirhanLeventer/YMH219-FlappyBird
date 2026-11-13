@@ -70,6 +70,13 @@ namespace FlappyBird
             }
         }
 
+        /// <summary>Kuşu zeminin hemen üstüne yerleştirir (zemine gömülmüş görünmesin).</summary>
+        public void LandOn(float groundY)
+        {
+            Y = groundY - Height;
+            VelocityY = 0f;
+        }
+
         /// <summary>Kuşu çizer. Hıza göre burnunu yukarı/aşağı eğer.</summary>
         public void Draw(Graphics g)
         {
